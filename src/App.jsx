@@ -2,6 +2,7 @@ import { FaClipboard } from 'react-icons/fa'
 import { useForm } from './hooks/useForm'
 import { useState } from 'react'
 import { getRandomChar, getSpecialChar } from './utils'
+import toast from 'react-hot-toast'
 
 const App = () => {
   const [result, setResult] = useState('')
@@ -14,7 +15,7 @@ const App = () => {
     symbol: false
   })
 
-  const fieldsArray= [
+  const fieldsArray = [
     {
       field: values.capital,
       getChar: () => getRandomChar(65, 90),
@@ -41,13 +42,24 @@ const App = () => {
     for (let i = 0; i < values.length; i++) {
       const index = Math.floor(Math.random() * checkedFields.length)
       const letter = checkedFields[index]?.getChar()
-      
+
       if (letter) {
         generatedPassword += letter
       }
     }
     if (generatedPassword) {
       setResult(generatedPassword)
+    } else {
+      toast.error('Selecione pelo menos uma opção de senha!')
+    }
+  }
+
+  const handleClipboard = async () => {
+    if (result) {
+      await navigator.clipboard.writeText(result)
+      toast.success('Senha copiada!')
+    } else {
+      toast.error('Gere uma senha para ser copiada!')
     }
   }
 
@@ -58,7 +70,7 @@ const App = () => {
           <div className="result">
             <input type="text" id="result" placeholder="Min 6 Caracteres" readOnly value={result} />
             <div className="clipboard">
-              <FaClipboard />
+              <FaClipboard onClick={handleClipboard} />
             </div>
           </div>
           <div>
